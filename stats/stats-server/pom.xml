@@ -7,8 +7,8 @@
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>stats-server</artifactId>
-    <name>Archetype - stats-server</name>
+    <artifactId>ewm-service</artifactId>
+    <name>Archetype - ewm-service</name>
     <url>http://maven.apache.org</url>
     <dependencies>
         <dependency>
