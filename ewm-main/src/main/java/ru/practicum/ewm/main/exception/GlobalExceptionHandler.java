@@ -30,8 +30,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex) {
+    @ExceptionHandler({ConstraintViolationException.class,
+            IllegalArgumentException.class,
+            MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<Object> handleBadRequestException(RuntimeException ex) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", HttpStatus.BAD_REQUEST);
@@ -51,16 +53,6 @@ public class GlobalExceptionHandler {
         body.put("reason", "Integrity constraint has been violated.");
         body.put("message", ex.getMessage());
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler({MethodArgumentTypeMismatchException.class})
-    public ResponseEntity<Map<String, Object>> handleBadRequestException(MethodArgumentTypeMismatchException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.BAD_REQUEST);
-        body.put("reason", "Incorrectly made request.");
-        body.put("message", ex.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidEventDateException.class)

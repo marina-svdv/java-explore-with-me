@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.ewm.main.location.model.Location;
 
 import javax.validation.constraints.*;
@@ -28,6 +29,7 @@ public class NewEventDto {
     @NotNull
     @Future(message = "Event date must be in the future")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime eventDate;
 
     @NotNull

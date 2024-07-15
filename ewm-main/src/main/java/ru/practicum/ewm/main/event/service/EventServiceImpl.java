@@ -22,12 +22,15 @@ import ru.practicum.ewm.main.exception.*;
 import ru.practicum.ewm.main.location.dto.LocationDto;
 import ru.practicum.ewm.main.location.model.Location;
 import ru.practicum.ewm.main.location.repository.LocationRepository;
+import ru.practicum.ewm.main.notification.service.NotificationService;
 import ru.practicum.ewm.main.request.dto.ParticipationRequestDto;
 import ru.practicum.ewm.main.request.dto.RequestMapper;
 import ru.practicum.ewm.main.request.model.Request;
 import ru.practicum.ewm.main.request.model.RequestStatus;
 import ru.practicum.ewm.main.request.repository.RequestRepository;
+import ru.practicum.ewm.main.subscription.repository.SubscriptionRepository;
 import ru.practicum.ewm.main.user.model.User;
+import ru.practicum.ewm.main.subscription.model.Subscription;
 import ru.practicum.ewm.main.user.repository.UserRepository;
 import ru.practicum.ewm.stats.client.StatsClient;
 import ru.practicum.ewm.stats.dto.EndpointHitDto;
@@ -35,6 +38,7 @@ import ru.practicum.ewm.stats.dto.ViewStats;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -52,6 +56,8 @@ public class EventServiceImpl implements EventService {
     private final RequestRepository requestRepository;
     private final LocationRepository locationRepository;
     private final StatsClient statsClient;
+    private final SubscriptionRepository subscriptionRepository;
+    private final NotificationService notificationService;
 
     @Override
     public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
@@ -72,6 +78,24 @@ public class EventServiceImpl implements EventService {
         event.setState(State.PENDING);
 
         Event savedEvent = eventRepository.save(event);
+
+        // уведомление подписчиков
+        List<User> subscribers = subscriptionRepository.findAllByFollowing(user).stream()
+                .map(Subscription::getFollower)
+                .collect(Collectors.toList());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String message = String.format(
+                "New event created by %s:\nTitle: %s\nDate: %s\nDescription: %s",
+                user.getName(),
+                event.getTitle(),
+                event.getEventDate().format(formatter),
+                event.getDescription()
+        );
+        for (User subscriber : subscribers) {
+            notificationService.createNotification(subscriber, user, message);
+        }
+
+
         return EventMapper.toEventFullDto(savedEvent);
     }
 
@@ -90,8 +114,29 @@ public class EventServiceImpl implements EventService {
         if (updateEventUserRequest.getEventDate() != null && updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new InvalidEventDateException("Event date must be at least 2 hours from the current time");
         }
+
+        // получаем подписчиков
+        List<User> subscribers = subscriptionRepository.findAllByFollowing(user).stream()
+                .map(Subscription::getFollower)
+                .collect(Collectors.toList());
+
         Event updatedEvent = EventMapper.updateEventFromUserDto(updateEventUserRequest, event);
         eventRepository.save(updatedEvent);
+
+        // уведомление подписчиков
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String message = String.format(
+                "Event updated by %s:\nTitle: %s\nDate: %s\nDescription: %s\nState: %s",
+                user.getName(),
+                updatedEvent.getTitle(),
+                updatedEvent.getEventDate().format(formatter),
+                updatedEvent.getDescription(),
+                updatedEvent.getState()
+        );
+        for (User subscriber : subscribers) {
+            notificationService.createNotification(subscriber, user, message);
+        }
+
         return EventMapper.toEventFullDto(updatedEvent);
     }
 

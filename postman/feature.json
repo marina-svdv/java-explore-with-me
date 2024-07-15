@@ -1,0 +1,1157 @@
+{
+  "info": {
+    "name": "Subscription and notification feature tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "user1Id",
+      "value": ""
+    },
+    {
+      "key": "user2Id",
+      "value": ""
+    },
+    {
+      "key": "user3Id",
+      "value": ""
+    },
+    {
+      "key": "subscriptionId",
+      "value": ""
+    },
+    {
+      "key": "categoryId",
+      "value": ""
+    },
+    {
+      "key": "eventId",
+      "value": ""
+    },
+    {
+      "key": "eventId2",
+      "value": ""
+    },
+    {
+      "key": "locationId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "subscriptions",
+      "item": [
+        {
+          "name": "Create User 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"user1Id\", jsonData.id);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response has user details\", function () {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('email', 'firstUser@example.com');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"First User\",\n  \"email\": \"firstUser@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"user2Id\", jsonData.id);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response has user details\", function () {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('email', 'secondUser@example.com');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Second User\",\n  \"email\": \"secondUser@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User 3",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"user3Id\", jsonData.id);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response has user details\", function () {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('email', 'thirdUser@example.com');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Third User\",\n  \"email\": \"thirdUser@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User 1 subscribes to User 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"subscriptionId\", jsonData.id);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response has subscription details\", function () {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('followerId', pm.environment.get(\"user1Id\"));",
+                  "    pm.expect(jsonData).to.have.property('followingId', pm.environment.get(\"user2Id\"));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/subscriptions/{{user1Id}}/follow/{{user2Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subscriptions",
+                "{{user1Id}}",
+                "follow",
+                "{{user2Id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User 1 subscribes to User 3",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response has subscription details\", function () {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('followerId', pm.environment.get(\"user1Id\"));",
+                  "    pm.expect(jsonData).to.have.property('followingId', pm.environment.get(\"user3Id\"));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/subscriptions/{{user1Id}}/follow/{{user3Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subscriptions",
+                "{{user1Id}}",
+                "follow",
+                "{{user3Id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get subscriptions for User 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has subscriptions\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array').that.is.not.empty;",
+                  "    pm.expect(jsonData.length).to.eql(2);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/subscriptions/{{user1Id}}/following",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subscriptions",
+                "{{user1Id}}",
+                "following"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User 1 subscribes to non-existent user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test(\"Response has error message\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/subscriptions/{{user1Id}}/follow/99999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subscriptions",
+                "{{user1Id}}",
+                "follow",
+                "99999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User 1 subscribes to himself",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"Response has error message\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/subscriptions/{{user1Id}}/follow/{{user1Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subscriptions",
+                "{{user1Id}}",
+                "follow",
+                "{{user1Id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User 1 subscribes to User 2 again",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 409\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "pm.test(\"Response has error message\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/subscriptions/{{user1Id}}/follow/{{user2Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subscriptions",
+                "{{user1Id}}",
+                "follow",
+                "{{user2Id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete subscription for User 1 to User 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "*/*",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/subscriptions/{{user1Id}}/unfollow/{{user2Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subscriptions",
+                "{{user1Id}}",
+                "unfollow",
+                "{{user2Id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Check deletion of subscription",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has only one subscription\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    pm.expect(jsonData.length).to.eql(1);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/subscriptions/{{user1Id}}/following",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subscriptions",
+                "{{user1Id}}",
+                "following"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "notifications",
+      "item": [
+        {
+          "name": "Create category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"categoryId\", jsonData.id);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response has category details\", function () {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Category\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User 3 creates event",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"eventId\", jsonData.id);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response has event details\", function () {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"First Event\",\n  \"annotation\": \"This is a short description of the event.\",\n  \"description\": \"This is a detailed description of the event, which is longer than 20 characters.\",\n  \"category\": {{categoryId}},\n  \"paid\": false,\n  \"eventDate\": \"2025-01-01 12:00:00\",\n  \"participantLimit\": 100,\n  \"location\": { \"lat\": 40.7128, \"lon\": -74.0060 },\n  \"requestModeration\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{user3Id}}/events",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{user3Id}}",
+                "events"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get notifications for User 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has notifications\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array').that.is.not.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/{{user1Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{user1Id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get notifications for User 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has no event notifications\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var eventNotifications = jsonData.filter(function(notification) {",
+                  "        return notification.message.includes('New event created by') || notification.message.includes('Event updated by');",
+                  "    });",
+                  "    pm.expect(eventNotifications).to.be.an('array').that.is.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/{{user2Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{user2Id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get notifications for User 3 (no subscription)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has one notification with the correct message\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array').that.has.lengthOf(1);",
+                  "    pm.expect(jsonData[0]).to.have.property('message', 'You have a new follower: First User');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/{{user3Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{user3Id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User 1 unsubscribes from User 3",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "*/*",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/subscriptions/{{user1Id}}/unfollow/{{user3Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subscriptions",
+                "{{user1Id}}",
+                "unfollow",
+                "{{user3Id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User 3 creates another event",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"eventId2\", jsonData.id);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response has event details\", function () {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Second Event\",\n  \"annotation\": \"This is a short description of the event.\",\n  \"description\": \"Another Event Description\",\n  \"category\": {{categoryId}},\n  \"paid\": false,\n  \"eventDate\": \"2025-02-01 12:00:00\",\n  \"participantLimit\": 100,\n  \"location\": { \"lat\": 40.7128, \"lon\": -74.0060 },\n  \"requestModeration\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{user3Id}}/events",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{user3Id}}",
+                "events"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get notifications for User 1 after unsubscribe",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has no new notifications\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/{{user1Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{user1Id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User 1 subscribes to User 3 after event creation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"subscriptionId\", jsonData.id);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response has subscription details\", function () {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "    pm.expect(jsonData).to.have.property('followerId', pm.environment.get(\"user1Id\"));",
+                  "    pm.expect(jsonData).to.have.property('followingId', pm.environment.get(\"user3Id\"));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/subscriptions/{{user1Id}}/follow/{{user3Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "subscriptions",
+                "{{user1Id}}",
+                "follow",
+                "{{user3Id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get notifications for User 1 (no past events)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has no notifications for past events\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array').that.is.empty;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/{{user1Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{user1Id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User 3 creates another event",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"eventId2\", jsonData.id);",
+                  "pm.test(\"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test(\"Response has event details\", function () {",
+                  "    pm.expect(jsonData).to.have.property('id');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "*/*",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Third Event\",\n  \"annotation\": \"This is a short description of the event.\",\n  \"description\": \"Another Event Description\",\n  \"category\": {{categoryId}},\n  \"paid\": false,\n  \"eventDate\": \"2025-07-01 12:00:00\",\n  \"participantLimit\": 100,\n  \"location\": { \"lat\": 40.7128, \"lon\": -74.0060 },\n  \"requestModeration\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{user3Id}}/events",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{user3Id}}",
+                "events"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get notifications for User 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response has one notification with the correct message\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array').that.has.lengthOf(1);",
+                  "    pm.expect(jsonData[0]).to.have.property('message', 'New event created by Third User:\\nTitle: Third Event\\nDate: 2025-07-01 12:00\\nDescription: Another Event Description');",
+                  "    pm.expect(jsonData[0]).to.have.property('userId', parseInt(pm.environment.get('user1Id')));",
+                  "    pm.expect(jsonData[0]).to.have.property('read', false);",
+                  "    pm.expect(jsonData[0]).to.have.property('createdAt').that.is.a('string');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/{{user1Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{user1Id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
