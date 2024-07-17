@@ -11,16 +11,16 @@ import ru.practicum.ewm.main.user.model.User;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    Page<Notification> findByUser(User user, Pageable pageable);
+    Page<Notification> findByFollower(User follower, Pageable pageable);
 
-    Page<Notification> findByUserAndRead(User user, Boolean read, Pageable pageable);
-
-    @Modifying
-    @Query("DELETE FROM Notification n WHERE n.user = :user")
-    void deleteAllByUser(User user);
+    Page<Notification> findByFollowerAndRead(User follower, Boolean read, Pageable pageable);
 
     @Modifying
-    @Query("DELETE FROM Notification n WHERE n.user = :user AND n.fromUser = :fromUser")
-    void deleteAllByUserAndFromUser(@Param("user") User user,
-                                    @Param("fromUser") User fromUser);
+    @Query("DELETE FROM Notification n WHERE n.follower = :follower")
+    void deleteAllByFollower(User follower);
+
+    @Modifying
+    @Query("DELETE FROM Notification n WHERE n.follower = :follower AND n.following = :following")
+    void deleteAllByFollowerAndFollowing(@Param("follower") User follower,
+                                      @Param("following") User following);
 }

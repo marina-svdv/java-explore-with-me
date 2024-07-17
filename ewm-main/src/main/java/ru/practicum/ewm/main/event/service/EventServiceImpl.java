@@ -58,6 +58,7 @@ public class EventServiceImpl implements EventService {
     private final StatsClient statsClient;
     private final SubscriptionRepository subscriptionRepository;
     private final NotificationService notificationService;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @Override
     public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
@@ -83,7 +84,6 @@ public class EventServiceImpl implements EventService {
         List<User> subscribers = subscriptionRepository.findAllByFollowing(user).stream()
                 .map(Subscription::getFollower)
                 .collect(Collectors.toList());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         String message = String.format(
                 "New event created by %s:\nTitle: %s\nDate: %s\nDescription: %s",
                 user.getName(),
@@ -94,7 +94,6 @@ public class EventServiceImpl implements EventService {
         for (User subscriber : subscribers) {
             notificationService.createNotification(subscriber, user, message);
         }
-
 
         return EventMapper.toEventFullDto(savedEvent);
     }
@@ -124,7 +123,6 @@ public class EventServiceImpl implements EventService {
         eventRepository.save(updatedEvent);
 
         // уведомление подписчиков
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         String message = String.format(
                 "Event updated by %s:\nTitle: %s\nDate: %s\nDescription: %s\nState: %s",
                 user.getName(),

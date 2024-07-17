@@ -33,8 +33,13 @@ public class NotificationController {
         notificationService.deleteNotification(notificationId);
     }
 
-    @DeleteMapping("/{userId}/all")
-    public void deleteAllNotifications(@PathVariable Long userId) {
-        notificationService.deleteAllNotifications(userId);
+    @DeleteMapping("/{followerId}/all")
+    public void deleteAllNotificationsByFollower(@PathVariable Long followerId) {
+        notificationService.deleteAllNotificationsByFollower(followerId);
+    }
+
+    @DeleteMapping("/{followerId}/following/{followingId}/all")
+    public void deleteAllNotificationsByFollowerAndFollowing(@PathVariable Long followerId, @PathVariable Long followingId) {
+        notificationService.deleteAllNotificationsByFollowerAndFollowing(followerId, followingId);
     }
 }

@@ -1120,7 +1120,7 @@
                   "    var jsonData = pm.response.json();",
                   "    pm.expect(jsonData).to.be.an('array').that.has.lengthOf(1);",
                   "    pm.expect(jsonData[0]).to.have.property('message', 'New event created by Third User:\\nTitle: Third Event\\nDate: 2025-07-01 12:00\\nDescription: Another Event Description');",
-                  "    pm.expect(jsonData[0]).to.have.property('userId', parseInt(pm.environment.get('user1Id')));",
+                  "    pm.expect(jsonData[0]).to.have.property('followerId', parseInt(pm.environment.get('user1Id')));",
                   "    pm.expect(jsonData[0]).to.have.property('read', false);",
                   "    pm.expect(jsonData[0]).to.have.property('createdAt').that.is.a('string');",
                   "});"

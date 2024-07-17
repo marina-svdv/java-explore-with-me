@@ -7,7 +7,8 @@ import java.time.LocalDateTime;
 @Data
 public class NotificationDto {
     private Long id;
-    private Long userId;
+    private Long followerId;
+    private Long followingId;
     private String message;
     private LocalDateTime createdAt;
     private boolean read;

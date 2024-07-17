@@ -115,6 +115,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 .orElseThrow(() -> new IllegalStateException("Follow relationship not found"));
 
         subscriptionRepository.delete(subscription);
-        notificationRepository.deleteAllByUserAndFromUser(follower, following);
+        notificationRepository.deleteAllByFollowerAndFollowing(follower, following);
     }
 }

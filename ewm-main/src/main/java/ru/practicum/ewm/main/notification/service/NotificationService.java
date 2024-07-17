@@ -7,13 +7,15 @@ import java.util.List;
 
 public interface NotificationService {
 
-    void createNotification(User user, User fromUser, String message);
+    void createNotification(User follower, User following, String message);
 
-    List<NotificationDto> getUserNotifications(Long userId, Boolean read, int page, int size, String sortBy);
+    List<NotificationDto> getUserNotifications(Long follower, Boolean read, int page, int size, String sortBy);
 
-    public void markAsRead(List<Long> notificationIds);
+    void markAsRead(List<Long> notificationIds);
 
     void deleteNotification(Long notificationId);
 
-    void deleteAllNotifications(Long userId);
+    void deleteAllNotificationsByFollower(Long followerId);
+
+    void deleteAllNotificationsByFollowerAndFollowing(Long followerId, Long followingId);
 }

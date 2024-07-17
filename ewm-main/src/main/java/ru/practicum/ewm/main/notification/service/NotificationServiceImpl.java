@@ -28,22 +28,22 @@ public class NotificationServiceImpl implements NotificationService {
     private final UserRepository userRepository;
 
     @Override
-    public void createNotification(User user, User fromUser, String message) {
-        log.info("Creating notification for user with id={}", user.getId());
+    public void createNotification(User follower, User following, String message) {
+        log.info("Creating notification for user with id={}", follower.getId());
         Notification notification = new Notification();
-        notification.setUser(user);
-        notification.setFromUser(fromUser);
+        notification.setFollower(follower);
+        notification.setFollowing(following);
         notification.setMessage(message);
         notification.setCreatedAt(LocalDateTime.now());
         notificationRepository.save(notification);
-        log.info("Notification created for user with id={}", user.getId());
+        log.info("Notification created for user with id={}", follower.getId());
     }
 
     @Override
     public List<NotificationDto> getUserNotifications(Long userId, Boolean read, int page, int size, String sortOrder) {
         log.info("Fetching notifications for user with id={}, read={}, page={}, size={}, sortOrder={}",
                 userId, read, page, size, sortOrder);
-        User user = userRepository.findById(userId)
+        User follower = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User with id=" + userId + " not found"));
 
         Sort.Direction direction = "asc".equalsIgnoreCase(sortOrder) ? Sort.Direction.ASC : Sort.Direction.DESC;
@@ -51,9 +51,9 @@ public class NotificationServiceImpl implements NotificationService {
 
         List<Notification> notifications;
         if (read != null) {
-            notifications = notificationRepository.findByUserAndRead(user, read, pageRequest).getContent();
+            notifications = notificationRepository.findByFollowerAndRead(follower, read, pageRequest).getContent();
         } else {
-            notifications = notificationRepository.findByUser(user, pageRequest).getContent();
+            notifications = notificationRepository.findByFollower(follower, pageRequest).getContent();
         }
 
         log.info("Fetched {} notifications for user with id={}", notifications.size(), userId);
@@ -85,11 +85,22 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void deleteAllNotifications(Long userId) {
-        log.info("Deleting all notifications for user with id={}", userId);
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User with id=" + userId + " not found"));
-        notificationRepository.deleteAllByUser(user);
-        log.info("Deleted all notifications for user with id={}", userId);
+    public void deleteAllNotificationsByFollower(Long followerId) {
+        log.info("Deleting all notifications for follower with id={}", followerId);
+        User follower = userRepository.findById(followerId)
+                .orElseThrow(() -> new UserNotFoundException("User with id=" + followerId + " not found"));
+        notificationRepository.deleteAllByFollower(follower);
+        log.info("Deleted all notifications for follower with id={}", followerId);
+    }
+
+    @Override
+    public void deleteAllNotificationsByFollowerAndFollowing(Long followerId, Long followingId) {
+        log.info("Deleting all notifications for follower with id={} and following with id={}", followerId, followingId);
+        User follower = userRepository.findById(followerId)
+                .orElseThrow(() -> new UserNotFoundException("User with id=" + followerId + " not found"));
+        User following = userRepository.findById(followingId)
+                .orElseThrow(() -> new UserNotFoundException("User with id=" + followingId + " not found"));
+        notificationRepository.deleteAllByFollowerAndFollowing(follower, following);
+        log.info("Deleted all notifications for follower with id={} and following with id={}", followerId, followingId);
     }
 }

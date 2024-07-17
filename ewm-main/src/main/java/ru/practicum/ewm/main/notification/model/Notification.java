@@ -20,12 +20,12 @@ public class Notification {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "follower_id", nullable = false)
+    private User follower;
 
     @ManyToOne
-    @JoinColumn(name = "from_user_id", nullable = false)
-    private User fromUser;
+    @JoinColumn(name = "following_id", nullable = false)
+    private User following;
 
     @Column(nullable = false)
     private String message;
@@ -36,9 +36,9 @@ public class Notification {
     @Column(nullable = false)
     private boolean read;
 
-    public Notification(User user, User fromUser, String message) {
-        this.user = user;
-        this.fromUser = fromUser;
+    public Notification(User follower, User following, String message) {
+        this.follower = follower;
+        this.following = following;
         this.message = message;
         this.createdAt = LocalDateTime.now();
         this.read = false;
